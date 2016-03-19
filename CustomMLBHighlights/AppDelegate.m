@@ -19,7 +19,29 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [[ApplicationUIContext getInstance] setPrimaryWindow:self.window];
+    
+    //[self scheduleNotification];
+    
     return YES;
+}
+
+- (void) scheduleNotification
+{
+    UIUserNotificationSettings *setting = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:setting];
+    
+    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
+    if (localNotif == nil)
+        return;
+    
+    localNotif.fireDate = [NSDate dateWithTimeIntervalSinceNow:5];
+    localNotif.timeZone = [NSTimeZone defaultTimeZone];
+    localNotif.alertBody = @"Your highlights for today are ready";
+    localNotif.alertAction = NSLocalizedString(@"View", nil);
+    localNotif.soundName = UILocalNotificationDefaultSoundName;
+    localNotif.applicationIconBadgeNumber = 1;
+    
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
