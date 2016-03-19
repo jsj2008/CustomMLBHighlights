@@ -15,6 +15,7 @@
 #import "APIClient.h"
 #import "APIRequest.h"
 #import "SearchResponse.h"
+#import "VideoPlayer.h"
 
 @interface FeedViewController ()
 
@@ -31,7 +32,7 @@
     self.title = @"Feed";
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(openOptions:)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh:)];
+    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(play:)], [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh:)], nil];
 }
 
 - (IBAction)openOptions:(id)sender
@@ -46,6 +47,17 @@
     [self getVideos];
 //    self.packages = [JankDataAccess getFeed];
     [self.tableView reloadData];
+}
+
+- (IBAction)play:(id)sender
+{
+    if (self.package != nil && self.package.videos != nil && self.package.videos.count > 0)
+    {
+        VideoPlayer* player = [[VideoPlayer alloc] initWithPackage:self.package];
+        [self presentViewController:player animated:YES completion:^{
+            [player loadVideo];
+        }];
+    }
 }
 
 - (void) getVideos
