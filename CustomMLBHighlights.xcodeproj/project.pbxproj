@@ -35,6 +35,7 @@
 		09EF01661C9DE35A00C8B87E /* TeamAll.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF01651C9DE35A00C8B87E /* TeamAll.m */; };
 		09EF01691C9DE38F00C8B87E /* Team.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF01681C9DE38F00C8B87E /* Team.m */; };
 		09EF016C1C9DE43300C8B87E /* TeamQueryResults.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF016B1C9DE43300C8B87E /* TeamQueryResults.m */; };
+		09EF016F1C9DEB0400C8B87E /* PickPlayTypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF016E1C9DEB0400C8B87E /* PickPlayTypeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,6 +93,8 @@
 		09EF01681C9DE38F00C8B87E /* Team.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Team.m; sourceTree = "<group>"; };
 		09EF016A1C9DE43300C8B87E /* TeamQueryResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TeamQueryResults.h; sourceTree = "<group>"; };
 		09EF016B1C9DE43300C8B87E /* TeamQueryResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TeamQueryResults.m; sourceTree = "<group>"; };
+		09EF016D1C9DEB0400C8B87E /* PickPlayTypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PickPlayTypeViewController.h; sourceTree = "<group>"; };
+		09EF016E1C9DEB0400C8B87E /* PickPlayTypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickPlayTypeViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +151,8 @@
 				09EF015C1C9DD6CF00C8B87E /* VideoPlayer.m */,
 				09EF015E1C9DE1CB00C8B87E /* PickTeamViewController.h */,
 				09EF015F1C9DE1CB00C8B87E /* PickTeamViewController.m */,
+				09EF016D1C9DEB0400C8B87E /* PickPlayTypeViewController.h */,
+				09EF016E1C9DEB0400C8B87E /* PickPlayTypeViewController.m */,
 			);
 			path = CustomMLBHighlights;
 			sourceTree = "<group>";
@@ -281,6 +286,7 @@
 				09EF01561C9DCE1D00C8B87E /* XMLParser.m in Sources */,
 				09EF012E1C9DA52800C8B87E /* ApplicationColors.m in Sources */,
 				09EF016C1C9DE43300C8B87E /* TeamQueryResults.m in Sources */,
+				09EF016F1C9DEB0400C8B87E /* PickPlayTypeViewController.m in Sources */,
 				09EF01601C9DE1CB00C8B87E /* PickTeamViewController.m in Sources */,
 				09EF012B1C9DA3F600C8B87E /* ApplicationUIContext.m in Sources */,
 				09EF01471C9DBCE300C8B87E /* APIRequest.m in Sources */,

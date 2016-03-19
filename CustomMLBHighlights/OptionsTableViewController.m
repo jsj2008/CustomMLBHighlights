@@ -11,6 +11,7 @@
 #import "ApplicationColors.h"
 #import "ApplicationUIContext.h"
 #import "PickTeamViewController.h"
+#import "PickPlayTypeViewController.h"
 
 @interface OptionsTableViewController ()
 
@@ -164,6 +165,12 @@
         PickTeamViewController* teams = [[PickTeamViewController alloc] init];
         teams.delegate = self;
         [self.navigationController pushViewController:teams animated:YES];
+    }
+    else if (indexPath.section == 1 && indexPath.row == 2)
+    {
+        PickPlayTypeViewController* plays = [[PickPlayTypeViewController alloc] init];
+        plays.delegate = self;
+        [self.navigationController pushViewController:plays animated:YES];
     }
     
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
