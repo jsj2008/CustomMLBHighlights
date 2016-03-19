@@ -29,6 +29,7 @@
 		09EF01531C9DC6DE00C8B87E /* Thumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF01521C9DC6DE00C8B87E /* Thumbnail.m */; };
 		09EF01561C9DCE1D00C8B87E /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF01551C9DCE1D00C8B87E /* XMLParser.m */; };
 		09EF015A1C9DCFB900C8B87E /* VideoMetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF01591C9DCFB900C8B87E /* VideoMetaData.m */; };
+		09EF015D1C9DD6CF00C8B87E /* VideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EF015C1C9DD6CF00C8B87E /* VideoPlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +75,8 @@
 		09EF01571C9DCF9A00C8B87E /* XMLData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLData.h; sourceTree = "<group>"; };
 		09EF01581C9DCFB900C8B87E /* VideoMetaData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoMetaData.h; sourceTree = "<group>"; };
 		09EF01591C9DCFB900C8B87E /* VideoMetaData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoMetaData.m; sourceTree = "<group>"; };
+		09EF015B1C9DD6CF00C8B87E /* VideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayer.h; sourceTree = "<group>"; };
+		09EF015C1C9DD6CF00C8B87E /* VideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +129,8 @@
 				09EF013C1C9DB2BA00C8B87E /* OptionsTableViewController.h */,
 				09EF013D1C9DB2BA00C8B87E /* OptionsTableViewController.m */,
 				09EF013E1C9DB2BA00C8B87E /* OptionsTableViewController.xib */,
+				09EF015B1C9DD6CF00C8B87E /* VideoPlayer.h */,
+				09EF015C1C9DD6CF00C8B87E /* VideoPlayer.m */,
 			);
 			path = CustomMLBHighlights;
 			sourceTree = "<group>";
@@ -259,6 +264,7 @@
 				09EF015A1C9DCFB900C8B87E /* VideoMetaData.m in Sources */,
 				09EF014A1C9DBCED00C8B87E /* JSONObject.m in Sources */,
 				09EF01531C9DC6DE00C8B87E /* Thumbnail.m in Sources */,
+				09EF015D1C9DD6CF00C8B87E /* VideoPlayer.m in Sources */,
 				09EF01311C9DA8DA00C8B87E /* JankDataAccess.m in Sources */,
 				09EF01171C9DA1A700C8B87E /* AppDelegate.m in Sources */,
 				09EF013A1C9DAB9100C8B87E /* Favorite.m in Sources */,
