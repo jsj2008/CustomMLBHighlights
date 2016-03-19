@@ -18,5 +18,6 @@
 @property (nonatomic, strong) NSData* postData;
 
 + (APIRequest *) requestForFavorite: (Favorite*) favorite;
++ (APIRequest *) requestForTeams;
 
 @end

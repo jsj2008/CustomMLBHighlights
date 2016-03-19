@@ -105,4 +105,15 @@
     
 }
 
++ (void) saveFavorites: (NSMutableArray<Favorite*>*) favs
+{
+    NSMutableArray<NSDictionary*>* arr = [NSMutableArray array];
+    for (Favorite* f in favs)
+    {
+        [arr addObject:[f toDictionary]];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:arr forKey:FAVORITES];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end

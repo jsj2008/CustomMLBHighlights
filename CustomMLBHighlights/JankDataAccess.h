@@ -16,5 +16,6 @@
 + (void) saveHighlightPackage: (HighlightPackage *) package;
 + (NSMutableArray<Favorite*>*) getFavorites;
 + (void) saveDefaultFavorites;
++ (void) saveFavorites: (NSMutableArray<Favorite*>*) favs;
 
 @end

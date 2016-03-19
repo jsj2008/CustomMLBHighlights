@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong) NSMutableArray<Favorite*>* favorites;
 
+- (void) addFavorite: (Favorite *) fav;
+
 @end

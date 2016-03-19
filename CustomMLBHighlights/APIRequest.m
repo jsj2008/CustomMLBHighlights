@@ -8,6 +8,7 @@
 
 #import "APIRequest.h"
 #import "SearchResponse.h"
+#import "TeamsResponse.h"
 
 @implementation APIRequest
 
@@ -34,6 +35,14 @@
     APIRequest* sendRequest = [[APIRequest alloc] init];
     sendRequest.url = url;
     sendRequest.returnType = [SearchResponse class];
+    return sendRequest;
+}
+
++ (APIRequest *) requestForTeams
+{
+    APIRequest* sendRequest = [[APIRequest alloc] init];
+    sendRequest.url = @"http://mlb.com/lookup/json/named.team_all.bam?sport_code=%27mlb%27&active_sw=%27Y%27&all_star_sw=%27N%27";
+    sendRequest.returnType = [TeamsResponse class];
     return sendRequest;
 }
 
