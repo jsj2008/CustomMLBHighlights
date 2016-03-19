@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "ApplicationUIContext.h"
+#import "JankDataAccess.h"
 
 @interface AppDelegate ()
 
@@ -20,6 +21,9 @@
     // Override point for customization after application launch.
     [[ApplicationUIContext getInstance] setPrimaryWindow:self.window];
     
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
+    //[JankDataAccess saveDefaultFavorites];
     //[self scheduleNotification];
     
     return YES;
@@ -37,6 +41,7 @@
     localNotif.fireDate = [NSDate dateWithTimeIntervalSinceNow:5];
     localNotif.timeZone = [NSTimeZone defaultTimeZone];
     localNotif.alertBody = @"Your highlights for today are ready";
+    localNotif.alertTitle = @"MLB Highlights";
     localNotif.alertAction = NSLocalizedString(@"View", nil);
     localNotif.soundName = UILocalNotificationDefaultSoundName;
     localNotif.applicationIconBadgeNumber = 1;
