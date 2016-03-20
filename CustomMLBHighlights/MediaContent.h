@@ -20,4 +20,6 @@
 @property (nonatomic, strong) NSString* date_added;
 @property (nonatomic, strong) NSMutableArray<Thumbnail*>* thumbnails;
 
+- (BOOL) isTodayOrYesterday;
+
 @end
