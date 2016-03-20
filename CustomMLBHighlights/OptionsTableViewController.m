@@ -84,6 +84,7 @@
     
     if (indexPath.section == 0)
     {
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.textLabel.textColor = [ApplicationColors secondaryColor];
         
@@ -105,6 +106,7 @@
     }
     else
     {
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.textColor = [UIColor blackColor];
         cell.detailTextLabel.text = @"";
@@ -163,17 +165,69 @@
 
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 1 && indexPath.row == 0)
+
+    if (indexPath.section == 1)
     {
-        PickTeamViewController* teams = [[PickTeamViewController alloc] init];
-        teams.delegate = self;
-        [self.navigationController pushViewController:teams animated:YES];
-    }
-    else if (indexPath.section == 1 && indexPath.row == 2)
-    {
-        PickPlayTypeViewController* plays = [[PickPlayTypeViewController alloc] init];
-        plays.delegate = self;
-        [self.navigationController pushViewController:plays animated:YES];
+        switch (indexPath.row)
+        {
+            case 0:
+            {
+                PickTeamViewController* teams = [[PickTeamViewController alloc] init];
+                teams.delegate = self;
+                [self.navigationController pushViewController:teams animated:YES];
+                break;
+            }
+            case 1:
+            {
+                UIAlertController *ask = [UIAlertController alertControllerWithTitle:@"Add Player" message:@"Type a player's name" preferredStyle:UIAlertControllerStyleAlert];
+                [ask addTextFieldWithConfigurationHandler:^(UITextField *textField)
+                {
+                    textField.placeholder = @"name or keywords";
+                    self.txtPlayerName = textField;
+                }];
+                UIAlertAction *cancelAction = [UIAlertAction
+                        actionWithTitle:@"Cancel"
+                                  style:UIAlertActionStyleCancel
+                                handler:^(UIAlertAction *action)
+                                {
+                                }];
+
+                __weak OptionsTableViewController* weakSelf = self;
+
+                UIAlertAction *okAction = [UIAlertAction
+                        actionWithTitle:@"ADD"
+                                  style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction *action)
+                                {
+                                    if (weakSelf && self.txtPlayerName != nil)
+                                    {
+                                        Favorite* f = [[Favorite alloc] init];
+                                        f.name = weakSelf.txtPlayerName.text;
+                                        f.keyword = [weakSelf.txtPlayerName.text lowercaseString];
+                                        f.type = 2;
+                                        [weakSelf addFavorite:f];
+                                    }
+
+
+                                }];
+
+                [ask addAction:cancelAction];
+                [ask addAction:okAction];
+
+                [self presentViewController:ask animated:YES completion:nil];
+
+                break;
+            }
+            case 2:
+            {
+                PickPlayTypeViewController* plays = [[PickPlayTypeViewController alloc] init];
+                plays.delegate = self;
+                [self.navigationController pushViewController:plays animated:YES];
+                break;
+            }
+            default:
+                break;
+        }
     }
     
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
