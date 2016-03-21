@@ -16,6 +16,7 @@
 #import "APIRequest.h"
 #import "SearchResponse.h"
 #import "VideoPlayer.h"
+@import AVKit;
 
 @interface FeedViewController ()
 
@@ -54,9 +55,7 @@
     if (self.package != nil && self.package.videos != nil && self.package.videos.count > 0)
     {
         VideoPlayer* player = [[VideoPlayer alloc] initWithPackage:self.package];
-        [self presentViewController:player animated:YES completion:^{
-            [player loadVideo];
-        }];
+        [self presentViewController:player animated:YES completion:nil];
     }
 }
 
@@ -115,7 +114,7 @@
                                     //For play types and teams, only take videos from today and yesterday (max of 3)
                                     for (MediaContent *media in resp.mediaContent)
                                     {
-                                        if ([media isTodayOrYesterday] && added < 3)
+                                        if ([media isTodayOrYesterday] && added < max)
                                         {
                                             [weakSelf addVideoFromMedia:media toSource:weakSelf];
                                             added += 1;
