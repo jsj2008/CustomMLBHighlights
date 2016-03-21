@@ -21,4 +21,16 @@
     return self;
 }
 
+- (BOOL) isTodayOrYesterday
+{
+    if (!self.date_added)
+        return NO;
+
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MM/dd/yyyy"];
+    NSString* todayString = [formatter stringFromDate:[NSDate date]];
+    NSString* yesterdayString = [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:-60*60*24]];
+    return [self.date_added isEqualToString:todayString] || [self.date_added isEqualToString:yesterdayString];
+}
+
 @end

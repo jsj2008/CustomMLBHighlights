@@ -12,6 +12,7 @@
 @interface OptionsTableViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray<Favorite*>* favorites;
+@property (nonatomic, weak) UITextField* txtPlayerName;
 
 - (void) addFavorite: (Favorite *) fav;
 

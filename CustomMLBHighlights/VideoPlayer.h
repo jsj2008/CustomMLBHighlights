@@ -6,18 +6,19 @@
 //  Copyright © 2016 BaseballHackDay. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-@import MediaPlayer;
+@import UIKit;
+@import AVKit;
+@import AVFoundation;
+
 #import "HighlightPackage.h"
 
-@interface VideoPlayer : UIViewController
+@interface VideoPlayer : AVPlayerViewController
 
-@property (nonatomic, strong) MPMoviePlayerController *player;
 @property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) HighlightPackage* package;
-@property (nonatomic) NSInteger currentIndex;
+@property (nonatomic, strong) NSMutableArray<AVPlayerItem*>* avItems;
+@property NSUInteger currentIndex;
 
 - (id) initWithPackage: (HighlightPackage *) pack;
-- (void) loadVideo;
 
 @end

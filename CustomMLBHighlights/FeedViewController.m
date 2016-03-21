@@ -16,6 +16,7 @@
 #import "APIRequest.h"
 #import "SearchResponse.h"
 #import "VideoPlayer.h"
+@import AVKit;
 
 @interface FeedViewController ()
 
@@ -54,10 +55,27 @@
     if (self.package != nil && self.package.videos != nil && self.package.videos.count > 0)
     {
         VideoPlayer* player = [[VideoPlayer alloc] initWithPackage:self.package];
-        [self presentViewController:player animated:YES completion:^{
-            [player loadVideo];
-        }];
+        [self presentViewController:player animated:YES completion:nil];
     }
+}
+
+- (void) addVideoFromMedia: (MediaContent *) media toSource: (FeedViewController *) me
+{
+    if (!me)
+        return;
+
+    HighlightVideo* video = [[HighlightVideo alloc] init];
+    video.metaUrl = media.url;
+    video.headline = media.title;
+    video.duration = media.duration;
+    video.bigBlurb = media.bigBlurb;
+    video.dayCreated = media.date_added;
+    if (media.thumbnails != nil && media.thumbnails.count > 0)
+        video.thumbnailUrl = ((Thumbnail *)[media.thumbnails objectAtIndex:0]).src;
+
+    [video initializeVideoURL:nil];
+
+    [me.package.videos addObject:video];
 }
 
 - (void) getVideos
@@ -71,6 +89,8 @@
     for (Favorite* f in [JankDataAccess getFavorites])
     {
         [self.package.keywordsUsed addObject:f.name];
+
+        __weak FeedViewController* weakSelf = self;
         
         [APIClient processRequest:[APIRequest requestForFavorite:f] completion:^(APIRequestResult result, NSMutableArray* objs) {
             if (result == Success)
@@ -82,19 +102,49 @@
                     
                     if (resp.mediaContent != nil && resp.mediaContent.count > 0)
                     {
-                        MediaContent* media = [resp.mediaContent objectAtIndex:0];
-                        HighlightVideo* video = [[HighlightVideo alloc] init];
-                        video.metaUrl = media.url;
-                        video.headline = media.title;
-                        video.duration = media.duration;
-                        video.bigBlurb = media.bigBlurb;
-                        video.dayCreated = media.date_added;
-                        if (media.thumbnails != nil && media.thumbnails.count > 0)
-                            video.thumbnailUrl = ((Thumbnail *)[media.thumbnails objectAtIndex:0]).src;
-                        
-                        [video initializeVideoURL:nil];
-                        
-                        [self.package.videos addObject:video];
+                        if (f != nil)
+                        {
+                            switch (f.type)
+                            {
+                                case 1:
+                                case 3:
+                                {
+                                    int max = 3;
+                                    int added = 0;
+                                    //For play types and teams, only take videos from today and yesterday (max of 3)
+                                    for (MediaContent *media in resp.mediaContent)
+                                    {
+                                        if ([media isTodayOrYesterday] && added < max)
+                                        {
+                                            [weakSelf addVideoFromMedia:media toSource:weakSelf];
+                                            added += 1;
+                                        }
+                                    }
+
+                                    break;
+                                }
+                                case 2:
+                                {
+                                    int added = 0;
+
+                                    //For players, take all videos from today and yesterday or last one
+                                    for (MediaContent *media in resp.mediaContent)
+                                    {
+                                        if ([media isTodayOrYesterday] || added < 1)
+                                        {
+                                            [weakSelf addVideoFromMedia:media toSource:weakSelf];
+                                            added += 1;
+                                        }
+                                    }
+                                    break;
+                                }
+                                default:
+                                    break;
+                            }
+                        }
+
+
+
                     }
                     
                 }

@@ -14,105 +14,61 @@
 {
     self = [super init];
     if (self) {
-        self.modalPresentationStyle = UIModalPresentationFullScreen;
         self.package = pack;
-        self.currentIndex = 0;
+        self.avItems = [NSMutableArray array];
+        self.showsPlaybackControls = YES;
     }
     return self;
 }
 
-- (void) dealloc
+- (void)viewDidLoad
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+    [self loadVideo];
+    [self addTitleLabel];
 }
 
-- (void)loadView
+- (void)viewDidAppear:(BOOL)animated
 {
-    self.view = [[UIView alloc] init];
-    self.view.backgroundColor = [UIColor blackColor];
+    [super viewDidAppear:animated];
+    [self refreshTitleLabel];
+}
+
+- (void) dealloc
+{
+    [self.player removeObserver:self forKeyPath:@"status"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) loadVideo
 {
-    [self addVideoPlayer];
-    [self playNextVideo];
-}
-
-- (void) addVideoPlayer
-{
-    if (self.player == nil)
+    for (HighlightVideo *video in self.package.videos)
     {
-        MPMoviePlayerController *p = [[MPMoviePlayerController alloc] init];
-        self.player = p;
-        
-        self.player.scalingMode = MPMovieScalingModeAspectFit;
-        self.player.controlStyle = MPMovieControlStyleFullscreen;
-        self.player.shouldAutoplay = YES;
-        
-        [self.player.view setFrame: self.view.bounds];
-        self.player.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        [self.view addSubview:self.player.view];
-        
-        //Notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(moviePlayBackDidFinish:)
-                                                     name:MPMoviePlayerPlaybackDidFinishNotification
-                                                   object:self.player];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(moviePlayerLoadStateDidChangeNotification:)
-                                                     name:MPMoviePlayerLoadStateDidChangeNotification
-                                                   object:self.player];
-        
-        
-        /*
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(mediaIsPreparedToPlayDidChange:)
-                                                     name:MPMediaPlaybackIsPreparedToPlayDidChangeNotification
-                                                   object:self.player];
-         */
-        
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-        self.titleLabel.textColor = [UIColor whiteColor];
-        self.titleLabel.font = [UIFont systemFontOfSize:24.0f];
-        [self.view addSubview:self.titleLabel];
+        [video initializeVideoURL:^{
+
+            [self.avItems addObject:[AVPlayerItem playerItemWithURL:[NSURL URLWithString:video.videoUrl]]];
+
+            if (self.avItems.count == self.package.videos.count)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    AVQueuePlayer* queue = [AVQueuePlayer queuePlayerWithItems:self.avItems];
+                    self.player = queue;
+                    [queue addObserver:self forKeyPath:@"status" options:0 context:nil];
+                    self.currentIndex = 0;
+                });
+            }
+
+        }];
     }
 }
 
-- (void) moviePlayerLoadStateDidChangeNotification:(NSNotification*)notification
+- (void) addTitleLabel
 {
-    NSLog(@"NExt?");
-}
-
-- (void) moviePlayBackDidFinish:(NSNotification*)notification
-{
-    NSNumber *reason = [[notification userInfo] objectForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey];
-    switch ([reason integerValue])
-    {
-            /* The end of the movie was reached. */
-        case MPMovieFinishReasonPlaybackEnded:
-            [self playNextVideo];
-            break;
-            
-            /* An error was encountered during playback. */
-        case MPMovieFinishReasonPlaybackError:
-        {
-            NSLog(@"An error was encountered during playback");
-            UIAlertView *error = [[UIAlertView alloc] initWithTitle:@"Video Error" message:@"An error was encountered during playback" delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
-            [error show];
-            
-            break;
-        }
-            /* The user stopped playback. */
-        case MPMovieFinishReasonUserExited:
-        {
-            [self closeVideo];
-            
-            break;
-        }   
-        default:
-            break;
-    }
+    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [UIFont systemFontOfSize:24.0f];
+    [self.contentOverlayView addSubview:self.titleLabel];
 }
 
 - (void) closeVideo
@@ -120,36 +76,14 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void) playNextVideo
+- (void) refreshTitleLabel
 {
-    if (self.currentIndex < self.package.videos.count)
-    {
-        //self.player.movieSourceType = MPMovieSourceTypeStreaming;
-        self.player.movieSourceType = MPMovieSourceTypeUnknown;
-        
-        HighlightVideo* video = [self.package.videos objectAtIndex:self.currentIndex];
-        
-        self.titleLabel.text = video.headline;
-        [self.titleLabel sizeToFit];
-        self.titleLabel.center = self.view.center;
-        self.titleLabel.frame = CGRectMake(self.titleLabel.frame.origin.x, self.view.frame.size.height - self.titleLabel.frame.size.height - 80.0f, self.titleLabel.frame.size.width, self.titleLabel.frame.size.height);
-        
-        [video initializeVideoURL:^{
-        
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (video.videoUrl != nil)
-                {
-                    self.player.contentURL = [NSURL URLWithString:video.videoUrl];
-                    [self.player prepareToPlay];
-                    self.currentIndex += 1;
-                }
-            });
-        }];
-    }
-    else
-    {
-        [self closeVideo];
-    }
+    self.titleLabel.text = self.package.videos[self.currentIndex].headline;
+    [self.titleLabel sizeToFit];
+    self.titleLabel.center = self.view.center;
+    NSLog(@"frame: %f, %f", self.view.frame.size.width, self.view.frame.size.height);
+    self.titleLabel.frame = CGRectMake(self.titleLabel.frame.origin.x, self.view.frame.size.height - self.titleLabel.frame.size.height - 80.0f, self.titleLabel.frame.size.width, self.titleLabel.frame.size.height);
+
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
@@ -160,5 +94,31 @@
         self.titleLabel.frame = CGRectMake((size.width / 2.0f) - (self.titleLabel.frame.size.width / 2.0f), size.height - self.titleLabel.frame.size.height - 80.0f, self.titleLabel.frame.size.width, self.titleLabel.frame.size.height);
     }
 }
+
+- (void) itemDidFinishPlaying:(NSNotification *) notification
+{
+    self.currentIndex += 1;
+    if (self.currentIndex == self.package.videos.count)
+        [self closeVideo];
+    else
+        [self refreshTitleLabel];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+                        change:(NSDictionary *)change context:(void *)context {
+
+    if (object == self.player && [keyPath isEqualToString:@"status"]) {
+        if (self.player.status == AVPlayerStatusReadyToPlay)
+        {
+            NSLog(@"ready to play");
+            [self.player play];
+            return;
+        }
+    }
+
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+
+}
+
 
 @end

@@ -22,11 +22,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
-    
+    self.tableView.allowsMultipleSelectionDuringEditing = NO;
+
     self.title = @"Settings";
-    
+
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStylePlain target:self action:@selector(reset:)];
     self.favorites = [JankDataAccess getFavorites];
 }
 
@@ -35,6 +36,13 @@
     NSLog(@"Add favorite: %@", fav.name);
     [self.favorites addObject:fav];
     [JankDataAccess saveFavorites:self.favorites];
+    [self.tableView reloadData];
+}
+
+- (IBAction)reset:(id)sender
+{
+    [JankDataAccess saveDefaultFavorites];
+    self.favorites = [JankDataAccess getFavorites];
     [self.tableView reloadData];
 }
 
@@ -71,11 +79,12 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+
     UITableViewCell* cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"];
     
     if (indexPath.section == 0)
     {
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.textLabel.textColor = [ApplicationColors secondaryColor];
         
@@ -97,6 +106,7 @@
     }
     else
     {
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.textColor = [UIColor blackColor];
         cell.detailTextLabel.text = @"";
@@ -120,26 +130,21 @@
 }
 
 
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return indexPath.section == 0;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        [self.favorites removeObjectAtIndex:indexPath.row];
+        [JankDataAccess saveFavorites:self.favorites];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    }
 }
-*/
+
 
 /*
 // Override to support rearranging the table view.
@@ -160,17 +165,69 @@
 
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 1 && indexPath.row == 0)
+
+    if (indexPath.section == 1)
     {
-        PickTeamViewController* teams = [[PickTeamViewController alloc] init];
-        teams.delegate = self;
-        [self.navigationController pushViewController:teams animated:YES];
-    }
-    else if (indexPath.section == 1 && indexPath.row == 2)
-    {
-        PickPlayTypeViewController* plays = [[PickPlayTypeViewController alloc] init];
-        plays.delegate = self;
-        [self.navigationController pushViewController:plays animated:YES];
+        switch (indexPath.row)
+        {
+            case 0:
+            {
+                PickTeamViewController* teams = [[PickTeamViewController alloc] init];
+                teams.delegate = self;
+                [self.navigationController pushViewController:teams animated:YES];
+                break;
+            }
+            case 1:
+            {
+                UIAlertController *ask = [UIAlertController alertControllerWithTitle:@"Add Player" message:@"Type a player's name" preferredStyle:UIAlertControllerStyleAlert];
+                [ask addTextFieldWithConfigurationHandler:^(UITextField *textField)
+                {
+                    textField.placeholder = @"name or keywords";
+                    self.txtPlayerName = textField;
+                }];
+                UIAlertAction *cancelAction = [UIAlertAction
+                        actionWithTitle:@"Cancel"
+                                  style:UIAlertActionStyleCancel
+                                handler:^(UIAlertAction *action)
+                                {
+                                }];
+
+                __weak OptionsTableViewController* weakSelf = self;
+
+                UIAlertAction *okAction = [UIAlertAction
+                        actionWithTitle:@"ADD"
+                                  style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction *action)
+                                {
+                                    if (weakSelf && self.txtPlayerName != nil)
+                                    {
+                                        Favorite* f = [[Favorite alloc] init];
+                                        f.name = weakSelf.txtPlayerName.text;
+                                        f.keyword = [weakSelf.txtPlayerName.text lowercaseString];
+                                        f.type = 2;
+                                        [weakSelf addFavorite:f];
+                                    }
+
+
+                                }];
+
+                [ask addAction:cancelAction];
+                [ask addAction:okAction];
+
+                [self presentViewController:ask animated:YES completion:nil];
+
+                break;
+            }
+            case 2:
+            {
+                PickPlayTypeViewController* plays = [[PickPlayTypeViewController alloc] init];
+                plays.delegate = self;
+                [self.navigationController pushViewController:plays animated:YES];
+                break;
+            }
+            default:
+                break;
+        }
     }
     
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
