@@ -28,6 +28,16 @@
     return self;
 }
 
+- (id) initWithSingleVideo: (HighlightVideo *) video
+{
+    self = [super init];
+    if (self)
+    {
+        self.videos = [NSMutableArray arrayWithObject:[[HighlightVideo alloc] initWithDictionary:[video toDictionary]]];
+    }
+    return self;
+}
+
 - (NSDictionary *) toDictionary
 {
     NSMutableArray* keywords = [NSMutableArray array];
