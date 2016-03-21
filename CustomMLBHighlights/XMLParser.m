@@ -30,7 +30,7 @@
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError
 {
-    NSString * errorString = [NSString stringWithFormat:@"Unable to download data.  Check your internet connection. (%ld)", [parseError code]];
+    NSString * errorString = [NSString stringWithFormat:@"Unable to download data.  Check your internet connection. (%ld)", (long)[parseError code]];
     NSLog(@"error parsing XML: %@", errorString);
 //    [self performSelector:@selector(showXMLError:) onThread:[NSThread mainThread] withObject:errorString waitUntilDone:NO];
     self.currentObjects = nil;

@@ -84,9 +84,12 @@
     self.package.keywordsUsed = [NSMutableArray array];
     self.package.videos = [NSMutableArray array];
     
-    [[ApplicationUIContext getInstance] showLoadingPanel];
+    NSArray<Favorite*>* favorites = [JankDataAccess getFavorites];
     
-    for (Favorite* f in [JankDataAccess getFavorites])
+    if (favorites.count > 0)
+        [[ApplicationUIContext getInstance] showLoadingPanel];
+    
+    for (Favorite* f in favorites)
     {
         [self.package.keywordsUsed addObject:f.name];
 
@@ -155,7 +158,6 @@
                 [[ApplicationUIContext getInstance] hideLoadingPanel];
             });
             
-            
         }];
     }
 }
@@ -200,6 +202,7 @@
         
         HighlightVideo* video = [self.package.videos objectAtIndex:indexPath.row];
         
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.textLabel.text = video.headline;
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", video.dayCreated, video.bigBlurb];
         cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:video.thumbnailUrl]]];
@@ -210,8 +213,23 @@
         UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"CellOld"];
         Favorite* f = [[JankDataAccess getFavorites] objectAtIndex:indexPath.row];
         cell.textLabel.text = f.name;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0)
+    {
+        //Launch single video
+        HighlightVideo* video = [self.package.videos objectAtIndex:indexPath.row];
+        HighlightPackage* single = [[HighlightPackage alloc] initWithSingleVideo:video];
+        VideoPlayer* player = [[VideoPlayer alloc] initWithPackage:single];
+        [self presentViewController:player animated:YES completion:nil];
+    }
+    
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 @end

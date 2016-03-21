@@ -15,5 +15,6 @@
 @property (nonatomic, strong) NSMutableArray<NSString*>* keywordsUsed;
 
 - (id) initWithDictionary: (NSDictionary *) dict;
+- (id) initWithSingleVideo: (HighlightVideo *) video;
 
 @end
