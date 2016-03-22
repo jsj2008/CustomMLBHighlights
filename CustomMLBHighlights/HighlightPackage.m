@@ -15,7 +15,6 @@
     self = [super init];
     if (self)
     {
-        self.keywordsUsed = (NSMutableArray*)[dict objectForKey:@"keywordsUsed"];
         NSMutableArray* savedVideos = (NSMutableArray *)[dict objectForKey:@"videos"];
         NSMutableArray<HighlightVideo*>* videos = [NSMutableArray array];
         for (NSDictionary *videoDict in savedVideos)
@@ -40,13 +39,7 @@
 
 - (NSDictionary *) toDictionary
 {
-    NSMutableArray* keywords = [NSMutableArray array];
     NSMutableArray* videos = [NSMutableArray array];
-    
-    for (NSString* k in self.keywordsUsed)
-    {
-        [keywords addObject:k];
-    }
     
     for (HighlightVideo* v in self.videos)
     {
@@ -54,7 +47,6 @@
     }
     
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-    [dict setObject:keywords forKey:@"keywordsUsed"];
     [dict setObject:videos forKey:@"videos"];
     return dict;
 }

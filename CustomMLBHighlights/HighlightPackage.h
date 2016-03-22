@@ -12,7 +12,6 @@
 @interface HighlightPackage : NSObject
 
 @property (nonatomic, strong) NSMutableArray<HighlightVideo*>* videos;
-@property (nonatomic, strong) NSMutableArray<NSString*>* keywordsUsed;
 
 - (id) initWithDictionary: (NSDictionary *) dict;
 - (id) initWithSingleVideo: (HighlightVideo *) video;

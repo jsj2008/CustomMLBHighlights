@@ -36,6 +36,7 @@
 @property (nonatomic, strong) NSString* duration;
 @property (nonatomic, strong) NSString* thumbnailUrl;
 @property (nonatomic, strong) NSString* dayCreated;
+@property (nonatomic, strong) NSString* keyword;
 
 - (id) initWithDictionary: (NSDictionary *) dict;
 - (NSDictionary *) toDictionary;

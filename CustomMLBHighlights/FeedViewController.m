@@ -59,7 +59,7 @@
     }
 }
 
-- (void) addVideoFromMedia: (MediaContent *) media toSource: (FeedViewController *) me
+- (void) addVideoFromMedia: (MediaContent *) media fromKeyword: (NSString *) keyword toSource: (FeedViewController *) me
 {
     if (!me)
         return;
@@ -70,6 +70,7 @@
     video.duration = media.duration;
     video.bigBlurb = media.bigBlurb;
     video.dayCreated = media.date_added;
+    video.keyword = keyword;
     if (media.thumbnails != nil && media.thumbnails.count > 0)
         video.thumbnailUrl = ((Thumbnail *)[media.thumbnails objectAtIndex:0]).src;
 
@@ -81,7 +82,6 @@
 - (void) getVideos
 {
     self.package = [[HighlightPackage alloc] init];
-    self.package.keywordsUsed = [NSMutableArray array];
     self.package.videos = [NSMutableArray array];
     
     NSArray<Favorite*>* favorites = [JankDataAccess getFavorites];
@@ -91,8 +91,6 @@
     
     for (Favorite* f in favorites)
     {
-        [self.package.keywordsUsed addObject:f.name];
-
         __weak FeedViewController* weakSelf = self;
         
         [APIClient processRequest:[APIRequest requestForFavorite:f] completion:^(APIRequestResult result, NSMutableArray* objs) {
@@ -119,7 +117,7 @@
                                     {
                                         if ([media isTodayOrYesterday] && added < max)
                                         {
-                                            [weakSelf addVideoFromMedia:media toSource:weakSelf];
+                                            [weakSelf addVideoFromMedia:media fromKeyword: resp.query toSource:weakSelf];
                                             added += 1;
                                         }
                                     }
@@ -135,7 +133,7 @@
                                     {
                                         if ([media isTodayOrYesterday] || added < 1)
                                         {
-                                            [weakSelf addVideoFromMedia:media toSource:weakSelf];
+                                            [weakSelf addVideoFromMedia:media fromKeyword: resp.query toSource:weakSelf];
                                             added += 1;
                                         }
                                     }
@@ -204,8 +202,9 @@
         
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.textLabel.text = video.headline;
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", video.dayCreated, video.bigBlurb];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@: %@ - %@", video.dayCreated, video.keyword, video.bigBlurb];
         cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:video.thumbnailUrl]]];
+        cell.accessoryType = UITableViewCellAccessoryDetailButton;
         return cell;
     }
     else
@@ -230,6 +229,18 @@
     }
     
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+- (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0)
+    {
+        HighlightVideo* video = [self.package.videos objectAtIndex:indexPath.row];
+        UIAlertController* blurb = [UIAlertController alertControllerWithTitle:video.keyword message:video.bigBlurb preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* dismiss = [UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:nil];
+        [blurb addAction:dismiss];
+        [self presentViewController:blurb animated:YES completion:nil];
+    }
 }
 
 @end

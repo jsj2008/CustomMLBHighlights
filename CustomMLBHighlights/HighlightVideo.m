@@ -24,6 +24,7 @@
         self.thumbnailUrl = [dict objectForKey:@"thumbnailUrl"];
         self.bigBlurb = [dict objectForKey:@"bigBlurb"];
         self.dayCreated = [dict objectForKey:@"dayCreated"];
+        self.keyword = [dict objectForKey:@"keyword"];
     }
     return self;
 }
@@ -38,6 +39,7 @@
     [dict setObject:self.thumbnailUrl forKey:@"thumbnailUrl"];
     [dict setObject:self.bigBlurb forKey:@"bigBlurb"];
     [dict setObject:self.dayCreated forKey:@"dayCreated"];
+    [dict setObject:self.keyword forKey:@"keyword"];
     return dict;
 }
 
