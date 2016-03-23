@@ -16,6 +16,7 @@
 #import "APIRequest.h"
 #import "SearchResponse.h"
 #import "VideoPlayer.h"
+#import "ApplicationColors.h"
 @import AVKit;
 
 @interface FeedViewController ()
@@ -202,7 +203,9 @@
         
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.textLabel.text = video.headline;
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@: %@ - %@", video.dayCreated, video.keyword, video.bigBlurb];
+        NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@: %@ - %@", video.dayCreated, video.keyword, video.bigBlurb]];
+        [attrString addAttribute:NSForegroundColorAttributeName value:[ApplicationColors secondaryColor] range:NSMakeRange(video.dayCreated.length + 2, video.keyword.length)];
+        cell.detailTextLabel.attributedText = attrString;
         cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:video.thumbnailUrl]]];
         cell.accessoryType = UITableViewCellAccessoryDetailButton;
         return cell;
