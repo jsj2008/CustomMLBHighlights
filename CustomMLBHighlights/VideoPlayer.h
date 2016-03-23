@@ -14,7 +14,8 @@
 
 @interface VideoPlayer : AVPlayerViewController
 
-@property (nonatomic, strong) UILabel* titleLabel;
+@property (nonatomic, strong) UIButton* titleButton;
+@property (nonatomic, strong) UIButton* skipButton;
 @property (nonatomic, strong) HighlightPackage* package;
 @property (nonatomic, strong) NSMutableArray<AVPlayerItem*>* avItems;
 @property NSUInteger currentIndex;

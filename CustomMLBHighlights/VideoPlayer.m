@@ -65,10 +65,18 @@
 
 - (void) addTitleLabel
 {
-    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    self.titleLabel.textColor = [UIColor whiteColor];
-    self.titleLabel.font = [UIFont systemFontOfSize:24.0f];
-    [self.contentOverlayView addSubview:self.titleLabel];
+    self.titleButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.titleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.titleButton setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+    self.titleButton.titleLabel.font = [UIFont systemFontOfSize:24.0f];
+    [self.titleButton addTarget:self action:@selector(skip:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.titleButton];
+    
+    self.skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.skipButton.frame = CGRectMake(0, 0, 80, 44);
+    self.skipButton.backgroundColor = [UIColor magentaColor];
+    
+    //[self.view addSubview:self.skipButton];
 }
 
 - (void) closeVideo
@@ -78,20 +86,22 @@
 
 - (void) refreshTitleLabel
 {
-    self.titleLabel.text = self.package.videos[self.currentIndex].headline;
-    [self.titleLabel sizeToFit];
-    self.titleLabel.center = self.view.center;
-    NSLog(@"frame: %f, %f", self.view.frame.size.width, self.view.frame.size.height);
-    self.titleLabel.frame = CGRectMake(self.titleLabel.frame.origin.x, self.view.frame.size.height - self.titleLabel.frame.size.height - 80.0f, self.titleLabel.frame.size.width, self.titleLabel.frame.size.height);
-
+    [self.titleButton setTitle:self.package.videos[self.currentIndex].headline forState:UIControlStateNormal];
+    [self.titleButton sizeToFit];
+    self.titleButton.center = self.view.center;
+    self.skipButton.center = self.view.center;
+    self.titleButton.frame = CGRectMake(self.titleButton.frame.origin.x, self.view.frame.size.height - self.titleButton.frame.size.height - 80.0f, self.titleButton.frame.size.width, self.titleButton.frame.size.height);
+    //self.skipButton.frame = CGRectMake(self.skipButton.frame.origin.x, self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height + 8.0, self.skipButton.frame.size.width, self.skipButton.frame.size.height);
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    if (self.titleLabel != nil)
+    if (self.titleButton != nil)
     {
-        self.titleLabel.center = self.view.center;
-        self.titleLabel.frame = CGRectMake((size.width / 2.0f) - (self.titleLabel.frame.size.width / 2.0f), size.height - self.titleLabel.frame.size.height - 80.0f, self.titleLabel.frame.size.width, self.titleLabel.frame.size.height);
+        self.titleButton.center = self.view.center;
+        self.titleButton.frame = CGRectMake((size.width / 2.0f) - (self.titleButton.frame.size.width / 2.0f), size.height - self.titleButton.frame.size.height - 80.0f, self.titleButton.frame.size.width, self.titleButton.frame.size.height);
+        self.skipButton.center = self.view.center;
+        //self.skipButton.frame = CGRectMake(self.skipButton.frame.origin.x, self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height + 8.0, self.skipButton.frame.size.width, self.skipButton.frame.size.height);
     }
 }
 
@@ -117,7 +127,15 @@
     }
 
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
 
+- (IBAction)skip:(id)sender
+{
+    if (self.player)
+    {
+        [(AVQueuePlayer *)self.player advanceToNextItem];
+        [self itemDidFinishPlaying:nil];
+    }
 }
 
 
