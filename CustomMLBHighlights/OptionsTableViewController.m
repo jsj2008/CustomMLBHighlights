@@ -51,30 +51,48 @@
     [[ApplicationUIContext getInstance] dismissModal];
 }
 
+- (IBAction)stepper:(id)sender
+{
+    [JankDataAccess saveVideoLimit:(NSInteger)((UIStepper *)sender).value];
+    UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", (long)[JankDataAccess getVideoLimit]];
+}
+
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 3;
 }
 
 - (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if (section == 0)
-    {
-        return @"Favorites";
+    switch (section) {
+        case 0:
+            return @"Favorites";
+        case 1:
+            return @"Edit";
+        case 2:
+            return @"Limit for plays and teams";
+            
+        default:
+            return nil;
     }
-    
-    return @"Edit";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0)
-    {
-        return self.favorites.count;
+    switch (section) {
+        case 0:
+            return self.favorites.count;
+        case 1:
+            return 3;
+        case 2:
+            return 1;
+            
+        default:
+            return 0;
     }
-    
-    return 3;
 }
 
 
@@ -104,7 +122,7 @@
                 break;
         }
     }
-    else
+    else if (indexPath.section == 1)
     {
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -124,6 +142,23 @@
                 cell.textLabel.text = @"Types of plays";
                 break;
         }
+    }
+    else
+    {
+        NSInteger limit = [JankDataAccess getVideoLimit];
+        UITableViewCell* stepCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"StepCell"];
+        stepCell.textLabel.text = @"Number of videos";
+        stepCell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", (long)limit];
+        
+        UIStepper* stepper = [[UIStepper alloc] initWithFrame:CGRectZero];
+        stepper.minimumValue = 1.0;
+        stepper.maximumValue = 20.0;
+        stepper.stepValue = 1.0;
+        stepper.value = limit;
+        [stepper addTarget:self action:@selector(stepper:) forControlEvents:UIControlEventValueChanged];
+        stepCell.accessoryView = stepper;
+        
+        cell = stepCell;
     }
     
     return cell;

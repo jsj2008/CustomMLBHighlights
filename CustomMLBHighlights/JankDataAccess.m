@@ -11,6 +11,7 @@
 
 #define FAVORITES               @"favorites"
 #define HIGHLIGHT_PACKAGES      @"highlight_packages"
+#define VIDEO_LIMIT             @"video_limit"
 
 @implementation JankDataAccess
 
@@ -113,6 +114,28 @@
         [arr addObject:[f toDictionary]];
     }
     [[NSUserDefaults standardUserDefaults] setObject:arr forKey:FAVORITES];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (NSInteger) getVideoLimit
+{
+    id num = [[NSUserDefaults standardUserDefaults] objectForKey:VIDEO_LIMIT];
+    if (num == nil)
+    {
+        NSInteger defaultLimit = 3;
+        [JankDataAccess saveVideoLimit:defaultLimit];
+        return defaultLimit;
+    }
+    
+    return ((NSNumber *)num).integerValue;
+}
+
++ (void) saveVideoLimit: (NSInteger) limit
+{
+    if (limit <= 0)
+        return;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:@(limit) forKey:VIDEO_LIMIT];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

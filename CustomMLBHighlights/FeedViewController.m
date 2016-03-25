@@ -86,6 +86,7 @@
     self.package.videos = [NSMutableArray array];
     
     NSArray<Favorite*>* favorites = [JankDataAccess getFavorites];
+    NSInteger limit = [JankDataAccess getVideoLimit];
     
     if (favorites.count > 0)
         [[ApplicationUIContext getInstance] showLoadingPanel];
@@ -111,12 +112,11 @@
                                 case 1:
                                 case 3:
                                 {
-                                    int max = 3;
                                     int added = 0;
                                     //For play types and teams, only take videos from today and yesterday (max of 3)
                                     for (MediaContent *media in resp.mediaContent)
                                     {
-                                        if ([media isTodayOrYesterday] && added < max)
+                                        if ([media isTodayOrYesterday] && added < limit)
                                         {
                                             [weakSelf addVideoFromMedia:media fromKeyword: resp.query toSource:weakSelf];
                                             added += 1;

@@ -17,5 +17,7 @@
 + (NSMutableArray<Favorite*>*) getFavorites;
 + (void) saveDefaultFavorites;
 + (void) saveFavorites: (NSMutableArray<Favorite*>*) favs;
++ (NSInteger) getVideoLimit;
++ (void) saveVideoLimit: (NSInteger) limit;
 
 @end
