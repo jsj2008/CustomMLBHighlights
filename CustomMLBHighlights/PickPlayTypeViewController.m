@@ -26,7 +26,7 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 6;
+    return 7;
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -56,6 +56,10 @@
             
         case 5:
             cell.textLabel.text = @"Walk offs";
+            break;
+            
+        case 6:
+            cell.textLabel.text = @"Must C";
             break;
             
         default:
@@ -101,6 +105,11 @@
             case 5:
                 f.name = @"Walk offs";
                 f.keyword = @"walk off";
+                break;
+                
+            case 6:
+                f.name = @"Must C";
+                f.keyword = @"must c";
                 break;
                 
             default:
