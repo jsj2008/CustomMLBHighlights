@@ -68,6 +68,7 @@
     self.titleButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.titleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.titleButton setTitleShadowColor:[UIColor blackColor] forState:UIControlStateNormal];
+    self.titleButton.titleLabel.shadowOffset = CGSizeMake(1.0f, 1.0f);
     self.titleButton.titleLabel.font = [UIFont systemFontOfSize:24.0f];
     [self.titleButton addTarget:self action:@selector(skip:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.titleButton];

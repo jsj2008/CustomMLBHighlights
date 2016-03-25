@@ -46,6 +46,10 @@ static ApplicationUIContext* instance_;
         modalNav.navigationBar.barTintColor = [ApplicationColors primaryColor];
         modalNav.navigationBar.barStyle = UIBarStyleBlack;
         self.currentModal = modalNav;
+        
+        if (![self isPhone])
+            modalNav.modalPresentationStyle = UIModalPresentationFormSheet;
+        
         [primaryWindow_.rootViewController presentViewController:modalNav animated:YES completion:nil];
     }
 }
@@ -95,6 +99,16 @@ static ApplicationUIContext* instance_;
     {
         [self.loadingPanel removeFromSuperview];
     }
+}
+
+- (BOOL) isPhone
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+    {
+        return YES;
+    }
+    
+    return NO;
 }
 
 @end
